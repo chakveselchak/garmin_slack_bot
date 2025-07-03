@@ -1,0 +1,6 @@
+Flask
+SQLAlchemy
+slack_sdk
+schedule
+python-dotenv
+garminconnect
