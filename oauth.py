@@ -26,7 +26,7 @@ def start_slack_oauth():
 
     params = {
         "client_id": SLACK_CLIENT_ID,
-        "scope": "users.profile:write,identity.basic",
+        "user_scope": "users.profile:write,identity.basic",
         "redirect_uri": REDIRECT_URI
     }
     logger.info(f"Final redirect to: https://slack.com/oauth/v2/authorize?{urlencode(params)}")  # ✅ правильно
