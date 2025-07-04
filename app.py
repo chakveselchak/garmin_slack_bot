@@ -41,8 +41,10 @@ def connect_garmin():
     return render_template("login.html")
 
 if __name__ == '__main__':
-    start_scheduler()
-    app.run(debug=True, ssl_context=('cert.pem', 'key.pem'))
+    if os.environ.get("RENDER"):
+        app.run(debug=False, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    else:
+        app.run(debug=True, ssl_context=('cert.pem', 'key.pem'))
 
 
 
