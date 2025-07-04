@@ -5,7 +5,14 @@ import requests
 from models import db, User
 import logging
 
+logging.basicConfig(
+    level=logging.DEBUG,  # 👈 или INFO, если не хочешь много мусора
+    format='[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
+)
+
 logger = logging.getLogger(__name__)
+
+
 
 SLACK_CLIENT_ID = os.getenv('SLACK_CLIENT_ID')
 SLACK_CLIENT_SECRET = os.getenv('SLACK_CLIENT_SECRET')
@@ -22,7 +29,7 @@ def start_slack_oauth():
         "scope": "users.profile:write,identity.basic",
         "redirect_uri": REDIRECT_URI
     }
-    logger.info("final redirect", "https://slack.com/oauth/v2/authorize?" + urlencode(params))
+    logger.info(f"Final redirect to: https://slack.com/oauth/v2/authorize?{urlencode(params)}")  # ✅ правильно
     return redirect(f"https://slack.com/oauth/v2/authorize?" + urlencode(params))
 
 def handle_slack_callback(request):
