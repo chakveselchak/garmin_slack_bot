@@ -3,6 +3,9 @@ from urllib.parse import urlencode
 from flask import redirect, session
 import requests
 from models import db, User
+import logging
+
+logger = logging.getLogger(__name__)
 
 SLACK_CLIENT_ID = os.getenv('SLACK_CLIENT_ID')
 SLACK_CLIENT_SECRET = os.getenv('SLACK_CLIENT_SECRET')
@@ -10,9 +13,9 @@ REDIRECT_URI = os.getenv('REDIRECT_URI')
 
 
 def start_slack_oauth():
-    logger.info("SLACK_CLIENT_ID", SLACK_CLIENT_ID);
-    logger.info("SLACK_CLIENT_SECRET", SLACK_CLIENT_SECRET);
-    logger.info("REDIRECT_URI", REDIRECT_URI);
+    logger.info(f"SLACK_CLIENT_ID = {SLACK_CLIENT_ID}")
+    logger.info(f"SLACK_CLIENT_SECRET = {SLACK_CLIENT_SECRET}")
+    logger.info(f"REDIRECT_URI = {REDIRECT_URI}")
 
     params = {
         "client_id": SLACK_CLIENT_ID,
@@ -24,7 +27,7 @@ def start_slack_oauth():
 
 def handle_slack_callback(request):
     code = request.args.get('code')
-    logger.info("code", code);
+    logger.info(f"code = {code}")
     response = requests.post("https://slack.com/api/oauth.v2.access", data={
         "client_id": SLACK_CLIENT_ID,
         "client_secret": SLACK_CLIENT_SECRET,
