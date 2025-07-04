@@ -11,7 +11,7 @@ def start_slack_oauth():
     params = {
         "client_id": SLACK_CLIENT_ID,
         "scope": "users.profile:write,identity.basic",
-        "redirect_uri": "https://127.0.0.1:5000/slack/oauth/callback"
+        "redirect_uri": "https://garmin-slack-bot.onrender.com/slack/oauth/callback"
     }
     return redirect("https://slack.com/oauth/v2/authorize?" + urlencode(params))
 
@@ -21,7 +21,7 @@ def handle_slack_callback(request):
         "client_id": SLACK_CLIENT_ID,
         "client_secret": SLACK_CLIENT_SECRET,
         "code": code,
-        "redirect_uri": "https://127.0.0.1:5000/slack/oauth/callback"
+        "redirect_uri": "https://garmin-slack-bot.onrender.com/slack/oauth/callback"
     }).json()
 
     if response.get("ok"):
