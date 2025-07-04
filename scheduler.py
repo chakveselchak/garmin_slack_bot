@@ -10,9 +10,9 @@ def update_all_users():
     with Flask(__name__).app_context():
         users = User.query.all()
         for user in users:
-            if user.garmin_email and user.garmin_password:
+            if user.slack_access_token and user.garmin_email and user.garmin_password:
                 battery = get_body_battery(user.garmin_email, user.garmin_password)
-                if battery:
+                if battery is not None:
                     update_slack_status(user.slack_access_token, battery)
 
 def start_scheduler():

@@ -14,6 +14,7 @@ db.init_app(app)
 
 with app.app_context():
     init_db()
+    start_scheduler()
 
 @app.route('/')
 def index():
@@ -37,8 +38,18 @@ def connect_garmin():
         user.garmin_email = request.form["email"]  # автошифруется
         user.garmin_password = request.form["password"]  # автошифруется
         db.session.commit()
-        return "✅ Garmin успешно подключён!"
+        return redirect("/status")
     return render_template("login.html")
+
+@app.route('/status')
+def status():
+    if "slack_user_id" not in session:
+        return redirect("/")
+    user = User.query.filter_by(slack_user_id=session["slack_user_id"]).first()
+    if user and user.garmin_email and user.garmin_password:
+        return "✅ Всё готово! Статус будет обновляться автоматически."
+    else:
+        return "❌ Не все данные подключены. Пожалуйста, подключите Garmin и Slack."
 
 if __name__ == '__main__':
     if os.environ.get("RENDER"):

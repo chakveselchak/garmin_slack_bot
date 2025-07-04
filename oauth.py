@@ -1,6 +1,6 @@
 import os
 from urllib.parse import urlencode
-from flask import redirect
+from flask import redirect, session
 import requests
 from models import db, User
 
