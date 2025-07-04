@@ -6,27 +6,37 @@ from models import db, User
 
 SLACK_CLIENT_ID = os.getenv('SLACK_CLIENT_ID')
 SLACK_CLIENT_SECRET = os.getenv('SLACK_CLIENT_SECRET')
+REDIRECT_URI = os.getenv('REDIRECT_URI')
+
 
 def start_slack_oauth():
+    logger.info("SLACK_CLIENT_ID", SLACK_CLIENT_ID);
+    logger.info("SLACK_CLIENT_SECRET", SLACK_CLIENT_SECRET);
+    logger.info("REDIRECT_URI", REDIRECT_URI);
+
     params = {
         "client_id": SLACK_CLIENT_ID,
         "scope": "users.profile:write,identity.basic",
-        "redirect_uri": "https://garmin-slack-bot.onrender.com/slack/oauth/callback"
+        "redirect_uri": REDIRECT_URI
     }
-    return redirect("https://slack.com/oauth/v2/authorize?" + urlencode(params))
+    logger.info("final redirect", "https://slack.com/oauth/v2/authorize?" + urlencode(params))
+    return redirect(f"https://slack.com/oauth/v2/authorize?" + urlencode(params))
 
 def handle_slack_callback(request):
     code = request.args.get('code')
+    logger.info("code", code);
     response = requests.post("https://slack.com/api/oauth.v2.access", data={
         "client_id": SLACK_CLIENT_ID,
         "client_secret": SLACK_CLIENT_SECRET,
         "code": code,
-        "redirect_uri": "https://garmin-slack-bot.onrender.com/slack/oauth/callback"
+        "redirect_uri": REDIRECT_URI
     }).json()
 
     if response.get("ok"):
         slack_user_id = response['authed_user']['id']
-        access_token = response['authed_user']['access_token']
+        access_token = response['authed_user']['access_token']  # <-- это xoxp token
+        
+
 
         session["slack_user_id"] = slack_user_id
 
