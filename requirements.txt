@@ -1,6 +1,7 @@
-Flask
+Flask-SQLAlchemy
 SQLAlchemy
 slack_sdk
 schedule
 python-dotenv
 garminconnect
+cryptography

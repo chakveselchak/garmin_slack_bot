@@ -1,3 +1,7 @@
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 from flask import Flask, request, redirect, render_template, session
 from models import db, init_db, User
 from oauth import start_slack_oauth, handle_slack_callback
@@ -30,12 +34,15 @@ def connect_garmin():
 
     user = User.query.filter_by(slack_user_id=session["slack_user_id"]).first()
     if request.method == "POST":
-        user.garmin_email = request.form["email"]
-        user.garmin_password = request.form["password"]
+        user.garmin_email = request.form["email"]  # автошифруется
+        user.garmin_password = request.form["password"]  # автошифруется
         db.session.commit()
-        return "✅ Garmin успешно подключён! Статус будет обновляться автоматически."
+        return "✅ Garmin успешно подключён!"
     return render_template("login.html")
 
 if __name__ == '__main__':
     start_scheduler()
-    app.run(debug=True)
+    app.run(debug=True, ssl_context=('cert.pem', 'key.pem'))
+
+
+

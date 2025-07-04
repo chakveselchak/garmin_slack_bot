@@ -8,12 +8,12 @@ SLACK_CLIENT_ID = os.getenv('SLACK_CLIENT_ID')
 SLACK_CLIENT_SECRET = os.getenv('SLACK_CLIENT_SECRET')
 
 def start_slack_oauth():
-    params = urlencode({
-        'client_id': SLACK_CLIENT_ID,
-        'scope': 'users.profile:write,identity.basic',
-        'redirect_uri': 'http://localhost:5000/slack/oauth/callback'
-    })
-    return redirect(f'https://slack.com/oauth/v2/authorize?{params}')
+    params = {
+        "client_id": SLACK_CLIENT_ID,
+        "scope": "users.profile:write,identity.basic",
+        "redirect_uri": "https://127.0.0.1:5000/slack/oauth/callback"
+    }
+    return redirect("https://slack.com/oauth/v2/authorize?" + urlencode(params))
 
 def handle_slack_callback(request):
     code = request.args.get('code')
@@ -21,7 +21,7 @@ def handle_slack_callback(request):
         "client_id": SLACK_CLIENT_ID,
         "client_secret": SLACK_CLIENT_SECRET,
         "code": code,
-        "redirect_uri": "http://localhost:5000/slack/oauth/callback"
+        "redirect_uri": "https://127.0.0.1:5000/slack/oauth/callback"
     }).json()
 
     if response.get("ok"):
