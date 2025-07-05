@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Статус подключения - Garmin Slack Bot{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>📊 Статус подключения</h1>
+    <p>Информация о вашей синхронизации</p>
+</div>
+
+{% if success %}
+<div class="status-card status-success">
+    <div class="status-icon">✅</div>
+    <div class="status-title">Всё готово!</div>
+    <div class="status-description">
+        Статус будет обновляться автоматически каждые 2 часа
+    </div>
+    
+    {% if battery_level %}
+    <div class="battery-indicator">
+        <span>Текущий Body Battery:</span>
+        <span class="battery-level {% if battery_level < 35 %}battery-low{% elif battery_level < 70 %}battery-medium{% else %}battery-high{% endif %}">
+            {{ battery_level }}%
+        </span>
+    </div>
+    {% endif %}
+    
+    <div style="margin-top: 1.5rem;">
+        <a href="/test-battery" class="link-btn">🔄 Проверить сейчас</a>
+        <a href="/clear-cache" class="link-btn">🧹 Очистить кэш</a>
+    </div>
+</div>
+{% else %}
+<div class="status-card status-error">
+    <div class="status-icon">❌</div>
+    <div class="status-title">Настройка не завершена</div>
+    <div class="status-description">
+        Не все данные подключены. Пожалуйста, подключите Garmin и Slack.
+    </div>
+    
+    <div style="margin-top: 1.5rem;">
+        <a href="/slack/oauth/start" class="link-btn">🔗 Подключить Slack</a>
+        <a href="/connect-garmin" class="link-btn">⚡ Подключить Garmin</a>
+    </div>
+</div>
+{% endif %}
+
+<div style="text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e1e5e9;">
+    <h3 style="color: #2e2e2e; margin-bottom: 1rem;">Настройки</h3>
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; flex: 1; min-width: 150px;">
+            <div style="font-weight: 600; color: #2e2e2e; margin-bottom: 0.5rem;">📅 Интервал</div>
+            <div style="color: #666; font-size: 0.9rem;">Каждые 2 часа</div>
+        </div>
+        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; flex: 1; min-width: 150px;">
+            <div style="font-weight: 600; color: #2e2e2e; margin-bottom: 0.5rem;">🔋 Уведомления</div>
+            <div style="color: #666; font-size: 0.9rem;">При низком уровне</div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

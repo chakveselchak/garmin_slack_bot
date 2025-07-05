@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - Garmin Slack Bot{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>{{ title }}</h1>
+</div>
+
+<div class="status-card {% if type == 'success' %}status-success{% elif type == 'error' %}status-error{% endif %}">
+    {% if type == 'success' %}
+        <div class="status-icon">✅</div>
+    {% elif type == 'error' %}
+        <div class="status-icon">❌</div>
+    {% else %}
+        <div class="status-icon">ℹ️</div>
+    {% endif %}
+    
+    <div class="status-title">{{ message }}</div>
+    
+    {% if battery_level %}
+    <div class="battery-indicator">
+        <span class="battery-level {% if battery_level < 35 %}battery-low{% elif battery_level < 70 %}battery-medium{% else %}battery-high{% endif %}">
+            {{ battery_level }}%
+        </span>
+    </div>
+    
+    {% if battery_level < 35 %}
+    <div style="margin-top: 1rem; padding: 1rem; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeaa7;">
+        <div style="color: #856404; font-weight: 600; margin-bottom: 0.5rem;">⚠️ Низкий уровень энергии</div>
+        <div style="color: #856404; font-size: 0.9rem;">
+            В вашем статусе Slack отображается: "Просьба не звонить. Отвечу текстом"
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+    
+    <div style="margin-top: 1.5rem;">
+        <a href="{{ back_url or '/' }}" class="btn">
+            ← Назад
+        </a>
+    </div>
+</div>
+{% endblock %} 

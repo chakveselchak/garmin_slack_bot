@@ -1,14 +1,52 @@
-<!doctype html>
-<html lang="ru">
-  <head><meta charset="UTF-8"><title>Подключение Garmin</title></head>
-  <body>
-    <h2>Введите данные Garmin Connect</h2>
-    <form method="POST">
-      <label>Email Garmin:</label><br>
-      <input type="email" name="email" required><br>
-      <label>Пароль:</label><br>
-      <input type="password" name="password" required><br><br>
-      <input type="submit" value="Сохранить и начать">
-    </form>
-  </body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Подключение Garmin Connect - Garmin Slack Bot{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>🔗 Подключение Garmin Connect</h1>
+    <p>Введите ваши данные для авторизации в Garmin Connect</p>
+</div>
+
+<form method="POST">
+    <div class="form-group">
+        <label class="form-label" for="email">
+            📧 Email Garmin Connect
+        </label>
+        <input 
+            type="email" 
+            id="email"
+            name="email" 
+            class="form-input"
+            placeholder="your.email@example.com"
+            required
+            autocomplete="email"
+        >
+    </div>
+    
+    <div class="form-group">
+        <label class="form-label" for="password">
+            🔒 Пароль
+        </label>
+        <input 
+            type="password" 
+            id="password"
+            name="password" 
+            class="form-input"
+            placeholder="Введите ваш пароль"
+            required
+            autocomplete="current-password"
+        >
+    </div>
+    
+    <button type="submit" class="btn">
+        🚀 Подключить и начать синхронизацию
+    </button>
+</form>
+
+<div style="text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e1e5e9;">
+    <p style="color: #666; font-size: 0.85rem; margin: 0;">
+        🔐 Ваши данные надежно зашифрованы и используются только для получения Body Battery
+    </p>
+</div>
+{% endblock %}

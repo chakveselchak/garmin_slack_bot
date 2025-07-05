@@ -23,7 +23,7 @@ with app.app_context():
 
 @app.route('/')
 def index():
-    return '<a href="/slack/oauth/start">Подключить Slack</a>'
+    return render_template('index.html')
 
 @app.route('/slack/oauth/start')
 def slack_oauth_start():
@@ -67,36 +67,67 @@ def status():
     if "slack_user_id" not in session:
         return redirect("/")
     user = User.query.filter_by(slack_user_id=session["slack_user_id"]).first()
-    if user and user.garmin_email and user.garmin_password:
-        return "✅ Всё готово! Статус будет обновляться автоматически каждые 2 часа."
-    else:
-        return "❌ Не все данные подключены. Пожалуйста, подключите Garmin и Slack."
+    
+    success = user and user.garmin_email and user.garmin_password and user.slack_access_token
+    battery_level = None
+    
+    # Если все подключено, попробуем получить текущий уровень батареи
+    if success and user:
+        try:
+            from garmin import get_body_battery
+            battery_level = get_body_battery(user.garmin_email, user.garmin_password)
+        except Exception as e:
+            logger.warning(f"Не удалось получить Body Battery для отображения: {e}")
+    
+    return render_template('status.html', success=success, battery_level=battery_level)
 
 @app.route('/clear-cache')
 def clear_cache():
     """Очистка кэша сессий Garmin"""
     from garmin import clear_session_cache
     clear_session_cache()
-    return "🧹 Кэш сессий Garmin очищен"
+    
+    return render_template('message.html', 
+                         title="Кэш очищен",
+                         message="🧹 Кэш сессий Garmin успешно очищен",
+                         type="success",
+                         back_url="/status")
 
 @app.route('/test-battery')
 def test_battery():
     """Тестирование получения Body Battery для текущего пользователя"""
     if "slack_user_id" not in session:
-        return "❌ Нет активной сессии. Сначала подключите Slack."
+        return render_template('message.html',
+                             title="Ошибка доступа",
+                             message="❌ Нет активной сессии. Сначала подключите Slack.",
+                             type="error",
+                             back_url="/")
     
     user = User.query.filter_by(slack_user_id=session["slack_user_id"]).first()
     if not user or not user.garmin_email or not user.garmin_password:
-        return "❌ Garmin аккаунт не подключен. Сначала подключите Garmin."
+        return render_template('message.html',
+                             title="Garmin не подключен",
+                             message="❌ Garmin аккаунт не подключен. Сначала подключите Garmin.",
+                             type="error",
+                             back_url="/connect-garmin")
     
     from garmin import get_body_battery
     logger.info(f"Тестовый запрос Body Battery для {user.garmin_email}")
     
     battery = get_body_battery(user.garmin_email, user.garmin_password)
     if battery is not None:
-        return f"✅ Body Battery: {battery}%"
+        return render_template('message.html',
+                             title="Body Battery получен",
+                             message=f"✅ Текущий Body Battery: {battery}%",
+                             type="success",
+                             back_url="/status",
+                             battery_level=battery)
     else:
-        return "❌ Не удалось получить данные Body Battery. Проверьте логи."
+        return render_template('message.html',
+                             title="Ошибка получения данных",
+                             message="❌ Не удалось получить данные Body Battery. Проверьте логи.",
+                             type="error",
+                             back_url="/status")
 
 if __name__ == '__main__':
     if os.environ.get("RENDER"):

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Garmin Slack Bot{% endblock %}</title>
+    
+    <!-- Mantine CSS -->
+    <link href="https://unpkg.com/@mantine/core@7.12.2/styles.css" rel="stylesheet">
+    <link href="https://unpkg.com/@mantine/notifications@7.12.2/styles.css" rel="stylesheet">
+    
+    <!-- Tabler Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/icons-sprite.svg">
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .header h1 {
+            color: #2e2e2e;
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .header p {
+            color: #666;
+            margin: 0.5rem 0 0 0;
+            font-size: 0.9rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2e2e2e;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .status-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+        
+        .status-success {
+            color: #28a745;
+        }
+        
+        .status-error {
+            color: #dc3545;
+        }
+        
+        .status-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .status-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .status-description {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .link-btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #f8f9fa;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            transition: background-color 0.2s;
+        }
+        
+        .link-btn:hover {
+            background: #e9ecef;
+        }
+        
+        .battery-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        
+        .battery-level {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2e2e2e;
+        }
+        
+        .battery-low {
+            color: #dc3545;
+        }
+        
+        .battery-medium {
+            color: #ffc107;
+        }
+        
+        .battery-high {
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+    
+    <!-- Mantine Core JavaScript -->
+    <script src="https://unpkg.com/@mantine/core@7.12.2/dist/index.umd.js"></script>
+</body>
+</html> 

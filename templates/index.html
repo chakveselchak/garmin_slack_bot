@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Garmin Slack Bot - Синхронизация Body Battery{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>⚡ Garmin Slack Bot</h1>
+    <p>Автоматическая синхронизация Body Battery с вашим статусом в Slack</p>
+</div>
+
+<div class="status-card">
+    <div class="status-icon">🔋</div>
+    <div class="status-title">Начните синхронизацию</div>
+    <div class="status-description">
+        Подключите ваш аккаунт Slack, чтобы автоматически обновлять статус с данными Body Battery из Garmin Connect
+    </div>
+    
+    <a href="/slack/oauth/start" class="btn" style="display: inline-block; text-decoration: none; margin-top: 1.5rem;">
+        🚀 Подключить Slack
+    </a>
+</div>
+
+<div style="text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e1e5e9;">
+    <h3 style="color: #2e2e2e; margin-bottom: 1rem;">Как это работает?</h3>
+    <div style="text-align: left; max-width: 400px; margin: 0 auto;">
+        <div style="margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span style="background: #667eea; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold;">1</span>
+            <span style="font-size: 0.9rem;">Подключите Slack аккаунт</span>
+        </div>
+        <div style="margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span style="background: #667eea; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold;">2</span>
+            <span style="font-size: 0.9rem;">Введите данные Garmin Connect</span>
+        </div>
+        <div style="margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span style="background: #667eea; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold;">3</span>
+            <span style="font-size: 0.9rem;">Статус обновляется каждые 2 часа</span>
+        </div>
+    </div>
+</div>
+{% endblock %} 
