@@ -21,7 +21,7 @@ def update_all_users():
         for user in users:
             if user.slack_access_token and user.garmin_email and user.garmin_password:
                 battery = get_body_battery(user.garmin_email, user.garmin_password)
-                logger.info(f"battery = {battery}"
+                logger.info(f"battery = {battery}")
                 if battery is not None:
                     update_slack_status(user.slack_access_token, battery)
 
