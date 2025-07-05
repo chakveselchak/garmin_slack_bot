@@ -1,4 +1,5 @@
 import os
+import logging
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -7,6 +8,8 @@ from flask import Flask, request, redirect, render_template, session
 from models import db, init_db, User
 from oauth import start_slack_oauth, handle_slack_callback
 from scheduler import start_scheduler
+
+logger = logging.getLogger(__name__)
 
 
 app = Flask(__name__)
@@ -36,10 +39,26 @@ def connect_garmin():
         return redirect("/")
 
     user = User.query.filter_by(slack_user_id=session["slack_user_id"]).first()
-    if request.method == "POST":
+    if request.method == "POST" and user:
         user.garmin_email = request.form["email"]  # автошифруется
         user.garmin_password = request.form["password"]  # автошифруется
         db.session.commit()
+        
+        # Сразу выполняем первый запрос Body Battery
+        from garmin import get_body_battery
+        from slack_api import update_slack_status
+        
+        if user and user.garmin_email and user.garmin_password and user.slack_access_token:
+            logger.info(f"Первый запрос Body Battery для {user.garmin_email}")
+            battery = get_body_battery(user.garmin_email, user.garmin_password)
+            if battery is not None:
+                logger.info(f"✔️ Первый Battery = {battery} для {user.slack_user_id}")
+                update_slack_status(user.slack_access_token, battery)
+            else:
+                logger.warning(f"⚠️ Не удалось получить первый Body Battery для {user.slack_user_id}")
+        else:
+            logger.warning("Не все данные пользователя доступны для первого запроса Body Battery")
+        
         return redirect("/status")
     return render_template("login.html")
 
@@ -49,9 +68,16 @@ def status():
         return redirect("/")
     user = User.query.filter_by(slack_user_id=session["slack_user_id"]).first()
     if user and user.garmin_email and user.garmin_password:
-        return "✅ Всё готово! Статус будет обновляться автоматически."
+        return "✅ Всё готово! Статус будет обновляться автоматически каждые 2 часа."
     else:
         return "❌ Не все данные подключены. Пожалуйста, подключите Garmin и Slack."
+
+@app.route('/clear-cache')
+def clear_cache():
+    """Очистка кэша сессий Garmin"""
+    from garmin import clear_session_cache
+    clear_session_cache()
+    return "🧹 Кэш сессий Garmin очищен"
 
 if __name__ == '__main__':
     if os.environ.get("RENDER"):
