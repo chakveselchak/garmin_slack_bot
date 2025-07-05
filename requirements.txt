@@ -1,4 +1,5 @@
 Flask-SQLAlchemy
+gunicorn
 SQLAlchemy
 slack_sdk
 schedule
