@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 def update_all_users():
     with Flask(__name__).app_context():
         users = User.query.all()
-        logger.info(f"users = {users}"
+        logger.info(f"users = {users}")
         for user in users:
             if user.slack_access_token and user.garmin_email and user.garmin_password:
                 battery = get_body_battery(user.garmin_email, user.garmin_password)
