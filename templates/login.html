@@ -8,7 +8,7 @@
     <p>Введите ваши данные для авторизации в Garmin Connect</p>
 </div>
 
-<form method="POST">
+<form method="POST" id="garminForm">
     <div class="form-group">
         <label class="form-label" for="email">
             📧 Email Garmin Connect
@@ -39,8 +39,15 @@
         >
     </div>
     
-    <button type="submit" class="btn">
-        🚀 Подключить и начать синхронизацию
+    <button type="submit" class="btn" id="submitBtn">
+        <span id="btnText">🚀 Подключить и начать синхронизацию</span>
+        <span id="btnLoader" style="display: none;">
+            <svg style="width: 20px; height: 20px; margin-right: 8px; animation: spin 1s linear infinite;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="m12 6-4 4 4 4"></path>
+            </svg>
+            Подключение...
+        </span>
     </button>
 </form>
 
@@ -49,4 +56,75 @@
         🔐 Ваши данные надежно зашифрованы и используются только для получения Body Battery
     </p>
 </div>
+
+<style>
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn:disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.form-input:disabled {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+}
+</style>
+
+<script>
+document.getElementById('garminForm').addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const btnLoader = document.getElementById('btnLoader');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    
+    // Проверяем, что форма валидна
+    if (!emailInput.value || !passwordInput.value) {
+        return;
+    }
+    
+    // Отключаем кнопку и показываем лоадер
+    submitBtn.disabled = true;
+    emailInput.disabled = true;
+    passwordInput.disabled = true;
+    
+    btnText.style.display = 'none';
+    btnLoader.style.display = 'inline-flex';
+    btnLoader.style.alignItems = 'center';
+    btnLoader.style.justifyContent = 'center';
+    
+    // Добавляем небольшую задержку для показа лоадера
+    setTimeout(() => {
+        // Форма отправится автоматически после этого события
+    }, 100);
+});
+
+// Возвращаем состояние кнопки при ошибке загрузки страницы
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const btnLoader = document.getElementById('btnLoader');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        
+        submitBtn.disabled = false;
+        emailInput.disabled = false;
+        passwordInput.disabled = false;
+        
+        btnText.style.display = 'inline';
+        btnLoader.style.display = 'none';
+    }
+});
+</script>
 {% endblock %}
