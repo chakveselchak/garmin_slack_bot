@@ -26,8 +26,8 @@
     {% endif %}
     
     <div style="margin-top: 1.5rem;">
-        <a href="/test-battery" class="link-btn" id="testBtn" onclick="showLoader(this)">🔄 Проверить сейчас</a>
-        <a href="/clear-cache" class="link-btn" id="clearBtn" onclick="showLoader(this)">🧹 Очистить кэш</a>
+        <a href="/test-battery" class="link-btn">🔄 Проверить сейчас</a>
+        <a href="/clear-cache" class="link-btn">🧹 Очистить кэш</a>
     </div>
 </div>
 {% else %}
@@ -58,88 +58,4 @@
         </div>
     </div>
 </div>
-
-<style>
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-.link-btn.loading {
-    opacity: 0.7;
-    pointer-events: none;
-    position: relative;
-}
-
-.link-btn.loading::before {
-    content: '';
-    position: absolute;
-    left: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 16px;
-    height: 16px;
-    border: 2px solid #667eea;
-    border-top: 2px solid transparent;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-.link-btn.loading {
-    padding-left: 32px;
-}
-</style>
-
-<script>
-function showLoader(element) {
-    // Добавляем класс загрузки
-    element.classList.add('loading');
-    
-    // Сохраняем оригинальный текст
-    const originalText = element.textContent;
-    
-    // Меняем текст в зависимости от кнопки
-    if (element.id === 'testBtn') {
-        element.textContent = 'Проверяем...';
-    } else if (element.id === 'clearBtn') {
-        element.textContent = 'Очищаем...';
-    }
-    
-    // Отключаем все кнопки действий
-    const allBtns = document.querySelectorAll('.link-btn');
-    allBtns.forEach(btn => {
-        if (btn !== element) {
-            btn.style.opacity = '0.5';
-            btn.style.pointerEvents = 'none';
-        }
-    });
-    
-    // Небольшая задержка перед переходом для показа лоадера
-    setTimeout(() => {
-        window.location.href = element.href;
-    }, 200);
-    
-    // Предотвращаем стандартный переход
-    return false;
-}
-
-// Восстанавливаем состояние при возврате на страницу
-window.addEventListener('pageshow', function(event) {
-    if (event.persisted) {
-        const allBtns = document.querySelectorAll('.link-btn');
-        allBtns.forEach(btn => {
-            btn.classList.remove('loading');
-            btn.style.opacity = '';
-            btn.style.pointerEvents = '';
-            
-            // Восстанавливаем оригинальный текст
-            if (btn.id === 'testBtn') {
-                btn.textContent = '🔄 Проверить сейчас';
-            } else if (btn.id === 'clearBtn') {
-                btn.textContent = '🧹 Очистить кэш';
-            }
-        });
-    }
-});
-</script>
 {% endblock %} 

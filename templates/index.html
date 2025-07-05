@@ -15,15 +15,8 @@
         Подключите ваш аккаунт Slack, чтобы автоматически обновлять статус с данными Body Battery из Garmin Connect
     </div>
     
-    <a href="/slack/oauth/start" class="btn" style="display: inline-block; text-decoration: none; margin-top: 1.5rem;" id="slackBtn" onclick="showSlackLoader(this)">
-        <span id="slackBtnText">🚀 Подключить Slack</span>
-        <span id="slackBtnLoader" style="display: none;">
-            <svg style="width: 18px; height: 18px; margin-right: 8px; animation: spin 1s linear infinite;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <path d="m12 6-4 4 4 4"></path>
-            </svg>
-            Подключение...
-        </span>
+    <a href="/slack/oauth/start" class="btn" style="display: inline-block; text-decoration: none; margin-top: 1.5rem;">
+        🚀 Подключить Slack
     </a>
 </div>
 
@@ -44,52 +37,4 @@
         </div>
     </div>
 </div>
-
-<style>
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-.btn.loading {
-    opacity: 0.8;
-    pointer-events: none;
-}
-</style>
-
-<script>
-function showSlackLoader(element) {
-    const btnText = document.getElementById('slackBtnText');
-    const btnLoader = document.getElementById('slackBtnLoader');
-    
-    // Показываем лоадер
-    element.classList.add('loading');
-    btnText.style.display = 'none';
-    btnLoader.style.display = 'inline-flex';
-    btnLoader.style.alignItems = 'center';
-    btnLoader.style.justifyContent = 'center';
-    
-    // Небольшая задержка перед переходом
-    setTimeout(() => {
-        window.location.href = element.href;
-    }, 300);
-    
-    return false;
-}
-
-// Восстанавливаем состояние при возврате на страницу
-window.addEventListener('pageshow', function(event) {
-    if (event.persisted) {
-        const slackBtn = document.getElementById('slackBtn');
-        const btnText = document.getElementById('slackBtnText');
-        const btnLoader = document.getElementById('slackBtnLoader');
-        
-        if (slackBtn) {
-            slackBtn.classList.remove('loading');
-            btnText.style.display = 'inline';
-            btnLoader.style.display = 'none';
-        }
-    }
-});
-</script>
 {% endblock %} 
