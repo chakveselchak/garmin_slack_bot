@@ -80,19 +80,62 @@ def get_body_battery(email, password, max_retries=2):
             
             battery_data = api.get_body_battery(today.isoformat())
             
+            # Отладочное логирование для понимания формата данных
+            logger.debug(f"Полученные данные Body Battery: {battery_data}")
+            logger.debug(f"Тип данных: {type(battery_data)}")
+            
             # Извлекаем уровень батареи
-            if battery_data and isinstance(battery_data, dict) and 'bodyBatteryValuesArray' in battery_data:
-                # Берем последнее значение за день
-                values = battery_data.get('bodyBatteryValuesArray', [])
-                if values:
-                    battery_level = values[-1].get('batteryLevel', 0)
-                    logger.info(f"✅ BodyBattery для {email}: {battery_level}")
-                    return battery_level
+            if battery_data:
+                if isinstance(battery_data, dict):
+                    logger.debug(f"Ключи в данных: {list(battery_data.keys())}")
+                    
+                    # Проверяем различные возможные форматы
+                    if 'bodyBatteryValuesArray' in battery_data:
+                        values = battery_data.get('bodyBatteryValuesArray', [])
+                        if values:
+                            battery_level = values[-1].get('batteryLevel', 0)
+                            logger.info(f"✅ BodyBattery для {email}: {battery_level} (формат: bodyBatteryValuesArray)")
+                            return battery_level
+                    
+                    # Альтернативный формат - прямо в корне
+                    elif 'batteryLevel' in battery_data:
+                        battery_level = battery_data.get('batteryLevel', 0)
+                        logger.info(f"✅ BodyBattery для {email}: {battery_level} (формат: прямой)")
+                        return battery_level
+                    
+                    # Проверяем другие возможные ключи
+                    elif 'bodyBatteryData' in battery_data:
+                        body_battery_data = battery_data.get('bodyBatteryData', [])
+                        if body_battery_data:
+                            battery_level = body_battery_data[-1].get('batteryLevel', 0)
+                            logger.info(f"✅ BodyBattery для {email}: {battery_level} (формат: bodyBatteryData)")
+                            return battery_level
+                    
+                    # Если это список
+                    elif isinstance(battery_data, list) and battery_data:
+                        battery_level = battery_data[-1].get('batteryLevel', 0)
+                        logger.info(f"✅ BodyBattery для {email}: {battery_level} (формат: список)")
+                        return battery_level
+                    
+                    else:
+                        logger.warning(f"⚠️ Неизвестный формат данных Body Battery для {email}")
+                        logger.warning(f"Доступные ключи: {list(battery_data.keys()) if isinstance(battery_data, dict) else 'не словарь'}")
+                        return None
+                        
+                elif isinstance(battery_data, list):
+                    logger.debug(f"Данные в формате списка, длина: {len(battery_data)}")
+                    if battery_data:
+                        battery_level = battery_data[-1].get('batteryLevel', 0)
+                        logger.info(f"✅ BodyBattery для {email}: {battery_level} (формат: список)")
+                        return battery_level
+                    else:
+                        logger.warning(f"⚠️ Пустой список данных Body Battery для {email}")
+                        return None
                 else:
-                    logger.warning(f"⚠️ Нет данных Body Battery для {email}")
+                    logger.warning(f"⚠️ Неожиданный тип данных Body Battery для {email}: {type(battery_data)}")
                     return None
             else:
-                logger.warning(f"⚠️ Неожиданный формат данных Body Battery для {email}")
+                logger.warning(f"⚠️ Нет данных Body Battery для {email}")
                 return None
 
         except GarminConnectTooManyRequestsError as e:

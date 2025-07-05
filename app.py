@@ -79,6 +79,25 @@ def clear_cache():
     clear_session_cache()
     return "🧹 Кэш сессий Garmin очищен"
 
+@app.route('/test-battery')
+def test_battery():
+    """Тестирование получения Body Battery для текущего пользователя"""
+    if "slack_user_id" not in session:
+        return "❌ Нет активной сессии. Сначала подключите Slack."
+    
+    user = User.query.filter_by(slack_user_id=session["slack_user_id"]).first()
+    if not user or not user.garmin_email or not user.garmin_password:
+        return "❌ Garmin аккаунт не подключен. Сначала подключите Garmin."
+    
+    from garmin import get_body_battery
+    logger.info(f"Тестовый запрос Body Battery для {user.garmin_email}")
+    
+    battery = get_body_battery(user.garmin_email, user.garmin_password)
+    if battery is not None:
+        return f"✅ Body Battery: {battery}%"
+    else:
+        return "❌ Не удалось получить данные Body Battery. Проверьте логи."
+
 if __name__ == '__main__':
     if os.environ.get("RENDER"):
         app.run(debug=False, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
