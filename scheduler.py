@@ -35,7 +35,7 @@ def start_scheduler(app):
                     logger.warning(f"❌ Пропущен пользователь {user.slack_user_id} — нет токена или данных Garmin")
 
     # Интервал обновления (15 мин = разумно для Garmin API)
-    schedule.every(15).minutes.do(update_all_users)
+    schedule.every(3).minutes.do(update_all_users)
     logger.info("⏰ Планировщик запущен")
 
     def run():
