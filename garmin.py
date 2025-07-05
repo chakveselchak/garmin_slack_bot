@@ -1,5 +1,6 @@
 from garminconnect import Garmin
 import logging
+import os
 
 logging.basicConfig(
     level=logging.DEBUG,  # 👈 или INFO, если не хочешь много мусора
