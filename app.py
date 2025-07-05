@@ -2,10 +2,12 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
+
 from flask import Flask, request, redirect, render_template, session
 from models import db, init_db, User
 from oauth import start_slack_oauth, handle_slack_callback
 from scheduler import start_scheduler
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
@@ -14,7 +16,7 @@ db.init_app(app)
 
 with app.app_context():
     init_db()
-    start_scheduler()
+    start_scheduler(app)
 
 @app.route('/')
 def index():
