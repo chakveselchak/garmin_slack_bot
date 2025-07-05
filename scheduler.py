@@ -17,16 +17,17 @@ def start_scheduler(app):
     def update_all_users():
         with app.app_context():
             users = User.query.all()
-            logger.info(f"users = {users}")
+            logger.info(f"Пользователей найдено: {len(users)}")
             for user in users:
                 if user.slack_access_token and user.garmin_email and user.garmin_password:
+                    logger.info(f"Обновляю пользователя: {user.slack_user_id}")
                     battery = get_body_battery(user.garmin_email, user.garmin_password)
-                    logger.info(f"battery for {user.slack_user_id} = {battery}")
+                    logger.info(f"BodyBattery = {battery}")
                     if battery is not None:
                         update_slack_status(user.slack_access_token, battery)
 
     schedule.every(1).minutes.do(update_all_users)
-    logger.info("⏰ Scheduler started")
+    logger.info("⏰ Garmin scheduler started")
 
     def run():
         while True:

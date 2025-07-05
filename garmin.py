@@ -12,10 +12,14 @@ def get_body_battery(email, password):
     try:
         client = Garmin(email, password)
         client.login()
-        logger.info(f"client = {client}")
+
         data = client.get_body_battery()
-        logger.info(f"get_body_battery = {data}")
-        return data.get("bodyBattery", {}).get("value", None)
+        logger.info(f"datatata = {data}")
+        # Пример: {'batteryLevel': 75, 'timestamp': ...}
+
+        battery_level = data.get("batteryLevel")
+        logger.info(f"Garmin body battery = {battery_level}")
+        return battery_level
     except Exception as e:
-        print("Garmin error:", e)
+        logger.error(f"Garmin error for {email}: {e}")
         return None
