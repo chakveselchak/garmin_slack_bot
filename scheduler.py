@@ -2,6 +2,7 @@ import schedule
 import time
 import threading
 import logging
+import random
 from models import db, User
 from garmin import get_body_battery
 from slack_api import update_slack_status
@@ -16,6 +17,11 @@ logger = logging.getLogger(__name__)
 def start_scheduler(app):
     def update_all_users():
         with app.app_context():
+            # Случайная задержка перед началом (10-30 секунд)
+            initial_delay = random.uniform(10, 30)
+            logger.info(f"Начинаю обновление через {initial_delay:.1f} секунд...")
+            time.sleep(initial_delay)
+            
             users = User.query.all()
             logger.info(f"Найдено пользователей: {len(users)}")
 
@@ -33,9 +39,15 @@ def start_scheduler(app):
                         logger.warning(f"⚠️ Не удалось получить Body Battery для {user.slack_user_id}")
                 else:
                     logger.warning(f"❌ Пропущен пользователь {user.slack_user_id} — нет токена или данных Garmin")
+                
+                # Добавляем случайную задержку между пользователями (30-90 секунд)
+                if len(users) > 1:  # Только если больше одного пользователя
+                    delay = random.uniform(30, 90)
+                    logger.info(f"Ожидание {delay:.1f} секунд перед следующим пользователем...")
+                    time.sleep(delay)
 
     # Интервал обновления (15 мин = разумно для Garmin API)
-    schedule.every(3).minutes.do(update_all_users)
+    schedule.every(15).minutes.do(update_all_users)
     logger.info("⏰ Планировщик запущен")
 
     def run():
