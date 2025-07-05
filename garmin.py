@@ -78,24 +78,83 @@ def get_body_battery(email, password, max_retries=2):
             today = datetime.date.today()
             logger.info(f"Запрашиваю Body Battery для {email} на {today}")
             
-            battery_data = api.get_body_battery(today.isoformat())
+            # Пробуем разные методы получения Body Battery
+            battery_data = None
+            
+            try:
+                # Метод 1: Стандартный get_body_battery
+                battery_data = api.get_body_battery(today.isoformat())
+                logger.debug(f"Метод 1 - get_body_battery: {battery_data}")
+            except Exception as e:
+                logger.warning(f"Метод 1 не сработал: {e}")
+            
+            if not battery_data:
+                try:
+                    # Метод 2: Диапазон дат
+                    battery_data = api.get_body_battery(today.isoformat(), today.isoformat())
+                    logger.debug(f"Метод 2 - get_body_battery с диапазоном: {battery_data}")
+                except Exception as e:
+                    logger.warning(f"Метод 2 не сработал: {e}")
+            
+            if not battery_data:
+                try:
+                    # Метод 3: Альтернативный метод через wellness данные
+                    wellness_data = api.get_stats(today.isoformat())
+                    logger.debug(f"Метод 3 - wellness данные: {wellness_data}")
+                    if wellness_data and 'bodyBatteryData' in wellness_data:
+                        battery_data = wellness_data['bodyBatteryData']
+                except Exception as e:
+                    logger.warning(f"Метод 3 не сработал: {e}")
             
             # Отладочное логирование для понимания формата данных
-            logger.debug(f"Полученные данные Body Battery: {battery_data}")
+            logger.debug(f"Итоговые данные Body Battery: {battery_data}")
             logger.debug(f"Тип данных: {type(battery_data)}")
             
             # Извлекаем уровень батареи
             if battery_data:
-                if isinstance(battery_data, dict):
+                if isinstance(battery_data, list) and battery_data:
+                    # Данные приходят в виде списка, берем первый элемент
+                    data_item = battery_data[0]
+                    logger.debug(f"Первый элемент данных: {data_item}")
+                    
+                    if isinstance(data_item, dict) and 'bodyBatteryValuesArray' in data_item:
+                        values_array = data_item.get('bodyBatteryValuesArray', [])
+                        logger.debug(f"bodyBatteryValuesArray: {values_array}")
+                        
+                        if values_array:
+                            # bodyBatteryValuesArray содержит пары [timestamp, level]
+                            # Берем последнее значение (последний элемент массива)
+                            last_value = values_array[-1]
+                            if isinstance(last_value, list) and len(last_value) >= 2:
+                                battery_level = last_value[1]  # Второй элемент - это уровень батареи
+                                logger.info(f"✅ BodyBattery для {email}: {battery_level} (формат: bodyBatteryValuesArray)")
+                                return battery_level
+                            else:
+                                logger.warning(f"⚠️ Неожиданный формат последнего значения: {last_value}")
+                                return None
+                        else:
+                            logger.warning(f"⚠️ Пустой bodyBatteryValuesArray для {email}")
+                            return None
+                    else:
+                        logger.warning(f"⚠️ Нет bodyBatteryValuesArray в данных для {email}")
+                        logger.warning(f"Доступные ключи: {list(data_item.keys()) if isinstance(data_item, dict) else 'не словарь'}")
+                        return None
+                        
+                elif isinstance(battery_data, dict):
                     logger.debug(f"Ключи в данных: {list(battery_data.keys())}")
                     
                     # Проверяем различные возможные форматы
                     if 'bodyBatteryValuesArray' in battery_data:
-                        values = battery_data.get('bodyBatteryValuesArray', [])
-                        if values:
-                            battery_level = values[-1].get('batteryLevel', 0)
-                            logger.info(f"✅ BodyBattery для {email}: {battery_level} (формат: bodyBatteryValuesArray)")
-                            return battery_level
+                        values_array = battery_data.get('bodyBatteryValuesArray', [])
+                        if values_array:
+                            last_value = values_array[-1]
+                            if isinstance(last_value, list) and len(last_value) >= 2:
+                                battery_level = last_value[1]
+                                logger.info(f"✅ BodyBattery для {email}: {battery_level} (формат: dict bodyBatteryValuesArray)")
+                                return battery_level
+                            else:
+                                logger.warning(f"⚠️ Неожиданный формат последнего значения: {last_value}")
+                                return None
                     
                     # Альтернативный формат - прямо в корне
                     elif 'batteryLevel' in battery_data:
@@ -103,33 +162,9 @@ def get_body_battery(email, password, max_retries=2):
                         logger.info(f"✅ BodyBattery для {email}: {battery_level} (формат: прямой)")
                         return battery_level
                     
-                    # Проверяем другие возможные ключи
-                    elif 'bodyBatteryData' in battery_data:
-                        body_battery_data = battery_data.get('bodyBatteryData', [])
-                        if body_battery_data:
-                            battery_level = body_battery_data[-1].get('batteryLevel', 0)
-                            logger.info(f"✅ BodyBattery для {email}: {battery_level} (формат: bodyBatteryData)")
-                            return battery_level
-                    
-                    # Если это список
-                    elif isinstance(battery_data, list) and battery_data:
-                        battery_level = battery_data[-1].get('batteryLevel', 0)
-                        logger.info(f"✅ BodyBattery для {email}: {battery_level} (формат: список)")
-                        return battery_level
-                    
                     else:
                         logger.warning(f"⚠️ Неизвестный формат данных Body Battery для {email}")
-                        logger.warning(f"Доступные ключи: {list(battery_data.keys()) if isinstance(battery_data, dict) else 'не словарь'}")
-                        return None
-                        
-                elif isinstance(battery_data, list):
-                    logger.debug(f"Данные в формате списка, длина: {len(battery_data)}")
-                    if battery_data:
-                        battery_level = battery_data[-1].get('batteryLevel', 0)
-                        logger.info(f"✅ BodyBattery для {email}: {battery_level} (формат: список)")
-                        return battery_level
-                    else:
-                        logger.warning(f"⚠️ Пустой список данных Body Battery для {email}")
+                        logger.warning(f"Доступные ключи: {list(battery_data.keys())}")
                         return None
                 else:
                     logger.warning(f"⚠️ Неожиданный тип данных Body Battery для {email}: {type(battery_data)}")
