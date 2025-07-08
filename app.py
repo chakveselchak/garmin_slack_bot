@@ -19,6 +19,18 @@ db.init_app(app)
 
 with app.app_context():
     init_db()
+    
+    # Миграция для существующих пользователей
+    try:
+        users_without_icon_style = User.query.filter(User.icon_style == None).all()
+        for user in users_without_icon_style:
+            user.icon_style = "classic"
+        if users_without_icon_style:
+            db.session.commit()
+            logger.info(f"Обновлено {len(users_without_icon_style)} пользователей с настройками по умолчанию")
+    except Exception as e:
+        logger.warning(f"Миграция настроек иконок: {e}")
+    
     start_scheduler(app)
 
 @app.route('/')
@@ -53,7 +65,7 @@ def connect_garmin():
             battery = get_body_battery(user.garmin_email, user.garmin_password)
             if battery is not None:
                 logger.info(f"✔️ Первый Battery = {battery} для {user.slack_user_id}")
-                update_slack_status(user.slack_access_token, battery)
+                update_slack_status(user.slack_access_token, battery, user.icon_style)
             else:
                 logger.warning(f"⚠️ Не удалось получить первый Body Battery для {user.slack_user_id}")
         else:
@@ -79,7 +91,8 @@ def status():
         except Exception as e:
             logger.warning(f"Не удалось получить Body Battery для отображения: {e}")
     
-    return render_template('status.html', success=success, battery_level=battery_level)
+    return render_template('status.html', success=success, battery_level=battery_level, 
+                         icon_style=user.icon_style if user else "classic")
 
 @app.route('/clear-cache')
 def clear_cache():
@@ -126,6 +139,34 @@ def test_battery():
         return render_template('message.html',
                              title="Ошибка получения данных",
                              message="❌ Не удалось получить данные Body Battery. Проверьте логи.",
+                             type="error",
+                             back_url="/status")
+
+@app.route('/settings', methods=['POST'])
+def update_settings():
+    """Обновление настроек пользователя"""
+    if "slack_user_id" not in session:
+        return redirect("/")
+    
+    user = User.query.filter_by(slack_user_id=session["slack_user_id"]).first()
+    if not user:
+        return redirect("/")
+    
+    # Обновляем стиль иконок
+    icon_style = request.form.get('icon_style', 'classic')
+    if icon_style in ['classic', 'doom']:
+        user.icon_style = icon_style
+        db.session.commit()
+        
+        return render_template('message.html',
+                             title="Настройки обновлены",
+                             message=f"✅ Стиль иконок изменен на: {'Классический' if icon_style == 'classic' else 'Игровой (DOOM)'}",
+                             type="success",
+                             back_url="/status")
+    else:
+        return render_template('message.html',
+                             title="Ошибка",
+                             message="❌ Неверный стиль иконок",
                              type="error",
                              back_url="/status")
 

@@ -34,7 +34,7 @@ def start_scheduler(app):
                     battery = get_body_battery(user.garmin_email, user.garmin_password)
                     if battery is not None:
                         logger.info(f"✔️ Battery = {battery} для {user.slack_user_id}")
-                        update_slack_status(user.slack_access_token, battery)
+                        update_slack_status(user.slack_access_token, battery, user.icon_style)
                     else:
                         logger.warning(f"⚠️ Не удалось получить Body Battery для {user.slack_user_id}")
                 else:

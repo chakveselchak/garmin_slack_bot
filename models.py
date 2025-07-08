@@ -11,6 +11,7 @@ class User(db.Model):
     slack_access_token = db.Column(db.String, nullable=False)
     garmin_email_encrypted = db.Column(db.LargeBinary)
     garmin_password_encrypted = db.Column(db.LargeBinary)
+    icon_style = db.Column(db.String, default="classic", nullable=False)
 
     @property
     def garmin_email(self):

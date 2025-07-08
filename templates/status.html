@@ -47,6 +47,33 @@
 
 <div style="text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e1e5e9;">
     <h3 style="color: #2e2e2e; margin-bottom: 1rem;">Настройки</h3>
+    
+    <!-- Форма выбора стиля иконок -->
+    <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; max-width: 400px; margin-left: auto; margin-right: auto;">
+        <div style="font-weight: 600; color: #2e2e2e; margin-bottom: 1rem;">🎨 Стиль иконок</div>
+        <form method="POST" action="/settings">
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 1rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="radio" name="icon_style" value="classic" {% if icon_style == 'classic' %}checked{% endif %}>
+                    <span>🔋 Классический</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="radio" name="icon_style" value="doom" {% if icon_style == 'doom' %}checked{% endif %}>
+                    <span>🎮 Игровой (DOOM)</span>
+                </label>
+            </div>
+            <button type="submit" style="background: #4a90e2; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">
+                Сохранить
+            </button>
+        </form>
+        
+        <!-- Описание стилей -->
+        <div style="margin-top: 1rem; padding: 1rem; background: white; border-radius: 6px; text-align: left; font-size: 0.85rem; color: #666;">
+            <div style="margin-bottom: 0.5rem;"><strong>Классический:</strong> 🔋 батарейка / ⚡ низкий заряд</div>
+            <div><strong>Игровой (DOOM):</strong> 8 уровней здоровья от полного (86%+) до критического (&lt;20%)</div>
+        </div>
+    </div>
+    
     <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
         <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; flex: 1; min-width: 150px;">
             <div style="font-weight: 600; color: #2e2e2e; margin-bottom: 0.5rem;">📅 Интервал</div>
