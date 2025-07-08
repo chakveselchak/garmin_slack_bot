@@ -9,19 +9,19 @@ def get_battery_emoji(battery_level, icon_style="classic"):
         # Игровой формат (DOOM 1993)
         if battery_level > 86:
             return ":doom0:"
-        elif battery_level < 86:
+        elif battery_level > 72:
             return ":doom1:"
-        elif battery_level < 72:
+        elif battery_level > 58:
             return ":doom2:"
-        elif battery_level < 58:
+        elif battery_level > 44:
             return ":doom3:"
-        elif battery_level < 44:
+        elif battery_level > 30:
             return ":doom4:"
-        elif battery_level < 30:
+        elif battery_level > 25:
             return ":doom5:"
-        elif battery_level < 25:
+        elif battery_level > 20:
             return ":doom6:"
-        elif battery_level < 20:
+        else:  # <= 20%
             return ":doom7:"
     else:
         # Классический формат (батарейки)
