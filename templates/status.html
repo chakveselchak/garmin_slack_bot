@@ -25,7 +25,7 @@
     </div>
     {% endif %}
     
-    <div style="margin-top: 1.5rem;">
+    <div class="action-buttons">
         <a href="/test-battery" class="link-btn">🔄 Проверить сейчас</a>
         <a href="/clear-cache" class="link-btn">🧹 Очистить кэш</a>
     </div>
@@ -38,50 +38,50 @@
         Не все данные подключены. Пожалуйста, подключите Garmin и Slack.
     </div>
     
-    <div style="margin-top: 1.5rem;">
+    <div class="action-buttons">
         <a href="/slack/oauth/start" class="link-btn">🔗 Подключить Slack</a>
         <a href="/connect-garmin" class="link-btn">⚡ Подключить Garmin</a>
     </div>
 </div>
 {% endif %}
 
-<div style="text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e1e5e9;">
-    <h3 style="color: #2e2e2e; margin-bottom: 1rem;">Настройки</h3>
+<div class="settings-section">
+    <h3 class="settings-title">Настройки</h3>
     
     <!-- Форма выбора стиля иконок -->
-    <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; max-width: 400px; margin-left: auto; margin-right: auto;">
-        <div style="font-weight: 600; color: #2e2e2e; margin-bottom: 1rem;">🎨 Стиль иконок</div>
+    <div class="icon-style-form">
+        <div class="icon-style-title">🎨 Стиль иконок</div>
         <form method="POST" action="/settings">
-            <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 1rem;">
-                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <div class="radio-group">
+                <label class="radio-label">
                     <input type="radio" name="icon_style" value="classic" {% if icon_style == 'classic' %}checked{% endif %}>
                     <span>🔋 Классический</span>
                 </label>
-                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <label class="radio-label">
                     <input type="radio" name="icon_style" value="doom" {% if icon_style == 'doom' %}checked{% endif %}>
                     <span>🎮 Игровой (DOOM)</span>
                 </label>
             </div>
-            <button type="submit" style="background: #4a90e2; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">
+            <button type="submit" class="save-btn">
                 Сохранить
             </button>
         </form>
         
         <!-- Описание стилей -->
-        <div style="margin-top: 1rem; padding: 1rem; background: white; border-radius: 6px; text-align: left; font-size: 0.85rem; color: #666;">
-            <div style="margin-bottom: 0.5rem;"><strong>Классический:</strong> 🔋 батарейка / ⚡ низкий заряд</div>
+        <div class="style-description">
+            <div><strong>Классический:</strong> 10 уровней заряда. Наиболее налядный вид</div>
             <div><strong>Игровой (DOOM):</strong> 8 уровней здоровья от полного (86%+) до критического (&lt;20%)</div>
         </div>
     </div>
     
-    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; flex: 1; min-width: 150px;">
-            <div style="font-weight: 600; color: #2e2e2e; margin-bottom: 0.5rem;">📅 Интервал</div>
-            <div style="color: #666; font-size: 0.9rem;">Каждые 15 минут</div>
+    <div class="settings-grid">
+        <div class="settings-item">
+            <div class="settings-item-title">📅 Интервал</div>
+            <div class="settings-item-value">Каждые 15 минут</div>
         </div>
-        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; flex: 1; min-width: 150px;">
-            <div style="font-weight: 600; color: #2e2e2e; margin-bottom: 0.5rem;">🔋 Уведомления</div>
-            <div style="color: #666; font-size: 0.9rem;">При низком уровне</div>
+        <div class="settings-item">
+            <div class="settings-item-title">🔋 Уведомления</div>
+            <div class="settings-item-value">При низком уровне</div>
         </div>
     </div>
 </div>

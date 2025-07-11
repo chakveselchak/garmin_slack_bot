@@ -26,16 +26,16 @@
     </div>
     
     {% if battery_level < 35 %}
-    <div style="margin-top: 1rem; padding: 1rem; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeaa7;">
-        <div style="color: #856404; font-weight: 600; margin-bottom: 0.5rem;">⚠️ Низкий уровень энергии</div>
-        <div style="color: #856404; font-size: 0.9rem;">
+    <div class="low-battery-warning">
+        <div class="warning-title">⚠️ Низкий уровень энергии</div>
+        <div class="warning-text">
             В вашем статусе Slack отображается: "Просьба не звонить. Отвечу текстом"
         </div>
     </div>
     {% endif %}
     {% endif %}
     
-    <div style="margin-top: 1.5rem;">
+    <div class="action-buttons">
         <a href="{{ back_url or '/' }}" class="btn">
             ← Назад
         </a>

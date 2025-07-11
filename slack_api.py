@@ -25,10 +25,28 @@ def get_battery_emoji(battery_level, icon_style="classic"):
             return ":doom7:"
     else:
         # Классический формат (батарейки)
-        if battery_level < 35:
-            return ":low_battery:"
-        else:
-            return ":battery:"
+        if battery_level > 90:
+            return ":battery0:"
+        elif battery_level > 80:
+            return ":battery1:"
+        elif battery_level > 70:
+            return ":battery2:"
+        elif battery_level > 60:
+            return ":battery3:"
+        elif battery_level > 50:
+            return ":battery4:"
+        elif battery_level > 40:
+            return ":battery5:"
+        elif battery_level > 30:
+            return ":battery6:"
+        elif battery_level > 25:
+            return ":battery7:"
+        elif battery_level > 20:
+            return ":battery8:"
+        elif battery_level > 15:
+            return ":battery9:"
+        elif battery_level > 10:
+            return ":battery10:"
 
 def update_slack_status(token, battery, icon_style="classic"):
     client = WebClient(token=token)
