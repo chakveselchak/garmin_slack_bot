@@ -43,9 +43,9 @@ def get_battery_emoji(battery_level, icon_style="classic"):
             return ":battery7:"
         elif battery_level > 20:
             return ":battery8:"
-        elif battery_level > 15:
-            return ":battery9:"
         elif battery_level > 10:
+            return ":battery9:"
+        else:  # <= 10%
             return ":battery10:"
 
 def update_slack_status(token, battery, icon_style="classic"):
